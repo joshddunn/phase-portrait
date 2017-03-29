@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./style.css">
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
+    <title>Phase portrait generator</title>
+    <link rel='icon' href='/personal/favicon.png'>
+</head>
+
+<body>
+
+<!-- javascript -->
+<script type="text/javascript" src="./js/drawArrow.js"></script>
+<script type="text/javascript" src="./js/coordinates.js"></script>
+<script type="text/javascript" src="./js/drawCurve.js"></script>
+<script type="text/javascript" src="./js/translateToMath.js"></script>
+<script type="text/javascript" src="./js/drawPhasePlane.js"></script>
+
+<!-- body -->
+
+<div class='title_banner'>
+    Phase portrait generator
+</div>
+
+<div class='content'>
+    Use log(x) in place of ln(x), and the form asin(x) for inverse trigonometric functions. <br>
+    e^x, exp(x), pi, and PI are all accepted inputs.
+</div>
+
+<div class='inputs'>
+
+    <div class='sub_inputs'>
+        <p>
+            dx/dt = <input id='dxdt' type='text' value='sin(y)'> 
+        </p>
+        <p>
+            dy/dt = <input id='dydt' type='text' value='cos(x)'>
+        </p>
+        <p>
+            xmin = <input id='xmin' type='text' value='-5'> 
+        </p>
+        <p>
+            xmax = <input id='xmax' type='text' value='5'> 
+        </p>
+    </div>
+
+    <div class='sub_inputs'>
+        <p>
+            xlabel = <input id='xlabel' type='text' value='xlabel'> 
+        </p>
+        <p>
+            ylabel = <input id='ylabel' type='text' value='ylabel'>
+        </p>
+        <p>
+            ymin = <input id='ymin' type='text' value='-5'>
+        </p>
+        <p>
+            ymax = <input id='ymax' type='text' value='5'>
+        </p>
+    </div>
+</div>
+
+<p class='info'>
+    <button id='draw'>draw plot</button>
+</p>
+
+<p class='error_message'>
+
+</p>
+
+<p class='info'>
+    You can click on the plot below to draw a solution curve.
+</p>
+
+<div class='canvas_div'>
+    <canvas id="mainCanvas" height="1000px" width="1000px"></canvas>
+</div>
+
+<script type="text/javascript">
+    var c = document.getElementById("mainCanvas");
+    var ctx = c.getContext("2d");
+    
+    var margin = 100;
+    var pwidth = 800;
+    var pheight = 800;
+    var dxdt;
+    var dydt;
+    var xmin;
+    var xmax;
+    var ymin;
+    var ymax;
+    var xlabel;
+    var ylabel;
+    var F;
+    var G;
+</script>
+
+<script type="text/javascript">
+$(function() {
+    $("#mainCanvas").on("click",function(e){
+        var offset = $(this).offset();
+        var xPos = e.pageX - offset.left;
+        var yPos = e.pageY - offset.top;
+
+        var closeEdge = margin/2;
+        var farEdge = pwidth/2 + margin/2;
+
+        if (xPos >= closeEdge && xPos <= farEdge && yPos >= closeEdge && yPos <= farEdge){
+            drawCurve(xPos,yPos);
+        }
+    });
+
+    $("#draw").on("click",function(){
+        dxdt = $("#dxdt").val();
+        dydt = $("#dydt").val();
+        xmin = Number($("#xmin").val());
+        xmax = Number($("#xmax").val());
+        ymin = Number($("#ymin").val());
+        ymax = Number($("#ymax").val());
+        xlabel = $("#xlabel").val();
+        ylabel = $("#ylabel").val();
+
+        if(xmin < xmax && ymin < ymax) {
+            drawPhasePlane();
+            $(".error_message").html('');
+        } else {
+            // add error message
+            console.log(xmin,xmax);
+            if (xmin >= xmax) {
+                $(".error_message").html('Error: xmin cannot be greater than or equal to xmax.');
+            } else if (ymin >= ymax) {
+                $(".error_message").html('Error: ymin cannot be greater than or equal to ymax.');
+            }
+        }
+    });
+
+    $("#draw").click();
+});
+
+</script>
+
+<div class='copy'>
+    Built by <a href='/personal'>Josh Dunn</a>
+</div>
+
+</body>
+</html>
